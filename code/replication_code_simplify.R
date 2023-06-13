@@ -33,8 +33,8 @@ ggplot(dta_unique, aes(x = to_pfeml)) +
 
 dta <- updated_data |> 
   mutate(cntryyr = paste(country, year, sep = "")) |> # creating the country-year fixed effects
-  filter(to_prior_seats >= 4) # Removing smaller parties
-  
-
-
-  
+  filter(to_prior_seats >= 4) |>  # Removing smaller parties
+  select(year, country, rile_distance_s, prior_coalition, prior_opposition, 
+         econ_distance_s, society_distance_s, party_dislike, party_like, cntryyr,
+         to_pfeml, to_prior_seats, to_mp_number) |> # selecting variables
+  na.omit()
