@@ -1,0 +1,68 @@
+---
+title: "Rep Dyad"
+author: "Chris Yurris"
+date: "2023-06-14"
+output: html_document
+---
+
+```{r}
+
+
+
+library(igraph)
+
+
+str_detect(colnames(updated_data), "to")
+
+to <- colnames(updated_data)[str_detect(colnames(updated_data), "to") == T & str_detect(colnames(updated_data), "together") == F]
+
+from <- colnames(updated_data)[str_detect(colnames(updated_data), "from") == T]
+
+
+from <- updated_data %>% dplyr::select(from, year)
+
+to <- updated_data %>% dplyr::select(to, year)
+
+colnames(to) <- str_replace(colnames(to), "to", "")
+
+colnames(from) <- str_replace(colnames(from), "from", "")
+
+
+
+vlist <- bind_rows(to, from) %>% distinct() 
+
+elist <- updated_data %>% dplyr::select(country, year, to_mp_number, from_mp_number, same_bloc, elecdate, sat_together_10years,sat_together_15years,
+                             sat_together_20years,
+                             nationalism_distance,
+                             rile_distance,
+                             galtan_distance,
+                             lrecon_distamce,
+                             govern_together_10,
+                             govern_together_15,
+                             govern_together_20,
+                             rile_distance_s,
+                             cntryyr,
+                             party_like,
+                             party_dislike,
+                             DM,
+                             logDM)
+```
+
+
+```{r}
+
+
+
+vlist <- vlist %>% 
+  mutate(year_MP = paste(`_mp_number`, year, sep = "_"))
+
+graph_from_data_frame(elist, 
+                               vertices = vlist)
+
+
+
+```
+
+
+
+
