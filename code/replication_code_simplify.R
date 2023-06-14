@@ -291,3 +291,252 @@ figS1 <- ggplot(plot_dta, aes(x=to_pfeml, y=fit, lty=group)) +
   ylim(c(2.5,6.5));figS1
 ggsave("_graphs/figS1.pdf", width = 12, height = 10)
 
+############################################
+############ CREATING TABLE S6 #############
+############################################
+
+## Read in data
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta <- updated_data |> 
+  mutate(countryyear = paste(country, year, sep = "")) |> #creating the country-year fixed effects
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike, party_like, countryyear, to_pfeml, 
+         from_rile, to_rile, logDM, to_left_bloc, to_prior_seats) |> 
+  na.omit()
+
+dta_small <- dta |> filter(to_prior_seats >= 4) 
+
+table.S6.1 <-lm(party_like ~ to_pfeml + rile_distance_s + logDM + prior_coalition + prior_opposition  + as.factor(year), data = dta_small)
+table.S6.2 <-lm(party_like ~ to_pfeml*logDM + rile_distance_s + prior_coalition + prior_opposition  + as.factor(year), data = dta_small)
+table.S6.3 <-lm(party_like ~ to_pfeml*logDM + rile_distance_s*logDM + prior_coalition*logDM + prior_opposition*logDM  + as.factor(year), data = dta_small)
+
+summary(table.S6.1)
+summary(table.S6.2)
+summary(table.S6.3)
+
+stargazer(type = "text", table.S6.1, table.S6.2, table.S6.3, 
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S6.1, table.S6.2, table.S6.3,
+                        clusters = dta_small$country),
+          keep = c("to_pfeml", "rile_distance_s", "logDM", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+############################################
+############ CREATING TABLE S7 #############
+############################################
+
+#Out party % women, non-clustered SEs
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta <- updated_data |> 
+  mutate(cntryyr = paste(country, year, sep = "")) |>  #creating the country-year fixed effects
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike, party_like, cntryyr, to_pfeml, to_prior_seats) |> 
+  na.omit() |> 
+  mutate(to_pfeml2 = to_pfeml^2) |>  # Creating squared term for out-party % women
+  filter(to_prior_seats >= 4)
+
+table.S7.1 <-lm(party_like ~ to_pfeml + to_pfeml2 + as.factor(cntryyr), data = dta)
+table.S7.2 <-lm(party_like ~ to_pfeml + to_pfeml2 + rile_distance_s + prior_coalition + prior_opposition + as.factor(cntryyr), data = dta)
+
+summary(table.S7.1)
+summary(table.S7.2)
+
+# With clustered ses
+stargazer(type = "text", table.S7.1, table.S7.2, 
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S7.1, table.S7.2,
+                        clusters = dta$country),
+          keep = c("to_pfeml", "to_pfeml2", "rile_distance_s", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+############################################
+############ CREATING FIG. S2 #############
+############################################
+
+## Create Plot Data
+
+# All values of Out-Party % women
+
+plot_S2 <- dta |> 
+  distinct(to_pfeml) |> 
+  mutate(to_pfeml2 = to_pfeml^2, # Create difference between in-and out-party women
+         ## Select other values (mean RILE distance, opposition together, France 2012 country year)
+         rile_distance_s = mean(dta$rile_distance_s, na.rm=T),
+         prior_coalition = 0,
+         prior_opposition = 1,
+         cntryyr = "France2012",
+         to_mp_number = "31320"
+  )
+
+figureS2.data <- data.frame(predict(table.S7.2, newdata = plot_S2, interval = "confidence"))
+
+plot_S2 <- plot_S2 |> 
+  mutate(fit = figureS2.data$fit,
+         lwr = figureS2.data$lwr,
+         upr = figureS2.data$upr)
+
+ggplot(plot_S2, aes(x=to_pfeml, y=fit))+ 
+  geom_line() +
+  geom_ribbon(aes(x = to_pfeml, y = fit, ymin = lwr,
+                  ymax = upr),
+              lwd = 1/2, alpha=0.1) +
+  theme_minimal() + 
+  theme(plot.title = element_text(size=12)) +
+  ylab("Predicted Out-Party Thermometer Rating")+
+  xlab("Proportion of Out-Party Women MPs") + 
+  ylim(c(2,5))
+ggsave("_graphs/figS2.pdf", width = 12, height = 10)
+
+############################################
+############ CREATING TABLE S8 #############
+############################################
+
+# Women-led parties
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta_womenlead <- updated_data |> 
+  filter(to_femaleleader == 1) |> 
+  mutate(countryyear = paste(country, year, sep = "")) |>  #creating the country-year fixed effects
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike, party_like, countryyear, to_pfeml, to_prior_seats) |> 
+  na.omit() |> 
+  filter(to_prior_seats >= 4)
+
+table.S8A1 <-lm(party_like ~ to_pfeml + as.factor(countryyear), data = dta_womenlead)
+table.S8A2 <-lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition + prior_opposition + as.factor(countryyear), data = dta_womenlead)
+
+summary(table.S8A1)
+summary(table.S8A2)
+
+# With clustered SEs
+stargazer(type = "text", table.S8A1, table.S8A2, 
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S8A1, table.S8A2,
+                        clusters = dta_womenlead$country),
+          keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+# Male-led parties
+
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta_malelead <- updated_data |> 
+  filter(to_femaleleader == 0) |> 
+  mutate(countryyear = paste(country, year, sep = "")) |> # creating the country-year fixed effects
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike, party_like, countryyear, to_pfeml, to_prior_seats) |> 
+  na.omit() |> 
+  filter(to_prior_seats >= 4) # Exclude small parties
+
+table.S8B1 <-lm(party_like ~ to_pfeml + as.factor(countryyear), data = dta_malelead)
+table.S8B2 <-lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition + prior_opposition + as.factor(countryyear), data = dta_malelead)
+
+summary(table.S8B1)
+summary(table.S8B2)  
+
+### With clustered SEs
+stargazer(type = "text", table.S8B1, table.S8B2, 
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S8B1, table.S8B2, 
+                        clusters = dta_malelead$country),
+          keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+############################################
+############ CREATING TABLE S9 #############
+############################################
+
+## Read in data
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta <- updated_data |> 
+  mutate(countryyear = paste(country, year, sep = ""), # creating the country-year fixed effects
+         partydyad   = paste(from_mp_number, to_mp_number, sep = "")) |>  #creating the party fixed effects / cluster
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike,party_like, countryyear, to_pfeml, 
+         from_rile, to_rile, to_mp_number, partydyad, to_prior_seats) |> 
+  na.omit() |> 
+  filter(to_prior_seats >= 4) # Exclude small parties
+
+table.S9 <-lm(party_like ~ to_pfeml  + rile_distance_s + prior_coalition + prior_opposition + as.factor(countryyear), data = dta)
+summary(table.S9)
+
+### With clustered SEs
+stargazer(type = "text", table.S9,
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Out-Party Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S9,
+                        clusters = dta$partydyad),
+          keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+############################################
+############ CREATING TABLE 10 #############
+############################################
+
+load("_data/dyadic_data_1-4-22.Rdata")
+
+dta <- updated_data |> 
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         party_dislike, to_pfeml, party_like, to_prior_seats) |> 
+  na.omit() |> 
+  filter(to_prior_seats >= 4) # Remove small parties, with fewer than 4 seats
+
+table.S10.1 <-lm(party_like ~ to_pfeml + as.factor(country), data = dta_small)
+table.S10.2 <-lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition + prior_opposition + as.factor(country), data = dta_small)
+
+summary(table.S10.2)
+
+### With clustered SEs
+stargazer(type = "text", table.S10.1, table.S10.2,
+          add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
+          se = starprep(table.S10.1, table.S10.2,
+                        clusters = dta_small$country),
+          keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
+                   "econ_distance_s", "society_distance_s"))
+
+##################################################
+############ CREATING TABLES 11 & 12 #############
+##################################################  
+
+load("_data/multilevel_1-5-22.Rdata") 
+
+indiv_data <- multilevel_data |> 
+  select(year, country, rile_distance_s, prior_coalition, 
+         prior_opposition, econ_distance_s, society_distance_s,
+         cntryyr, to_pfeml, from_pfeml, thermometer_score, ID, 
+         party_to, party_from, from_partyname, to_partyname, to_left_bloc, from_left_bloc,
+         to_right_bloc, from_right_bloc, gender, to_parfam, from_parfam, to_prior_seats,
+         from_mp_number, to_mp_number) |> 
+  mutate(gender = case_when(gender == "1" ~ "male",
+                            gender == "2" ~ "female"),  # Create gender variable
+         gender = as.factor(gender)) |> 
+  filter(is.na(to_pfeml) == F) |> 
+  mutate(dyad = paste(from_mp_number, to_mp_number, sep ="_to_"))
+
+### Create Table 11, column 1, with Standard errors clustered at country-year, party-dyad, and individual levels
+table11A.1.1 <-feols(thermometer_score ~ to_pfeml | ID, data = indiv_data, cluster = ~cntryyr)
+table11A.1.2 <-feols(thermometer_score ~ to_pfeml | ID, data = indiv_data, cluster = ~dyad)
+table11A.1.3 <-feols(thermometer_score ~ to_pfeml | ID, data = indiv_data, cluster = ~ID)
+
+### Create Table 11, column 2, with Standard errors clustered at country-year, party-dyad, and individual levels
+table11A.2.1 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | ID, data = indiv_data, cluster = ~cntryyr)
+table11A.2.2 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | ID, data = indiv_data, cluster = ~dyad)
+table11A.2.3 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | ID, data = indiv_data, cluster = ~ID)
+
+### Create Table 11B, column 1, with Standard errors clustered at country-year, party-dyad, and individual levels
+table11B.1.1 <-feols(thermometer_score ~ to_pfeml | cntryyr, data = indiv_data, cluster = ~cntryyr)
+table11B.1.2 <-feols(thermometer_score ~ to_pfeml | cntryyr, data = indiv_data, cluster = ~dyad)
+table11B.1.3 <-feols(thermometer_score ~ to_pfeml | cntryyr, data = indiv_data, cluster = ~ID)
+
+### Create Table 11B, column 2, with Standard errors clustered at country-year, party-dyad, and individual levels
+table11B.2.1 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | cntryyr, data = indiv_data, cluster = ~cntryyr)
+table11B.2.2 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | cntryyr, data = indiv_data, cluster = ~dyad)
+table11B.2.3 <-feols(thermometer_score ~ to_pfeml + + rile_distance_s + prior_coalition + prior_opposition | cntryyr, data = indiv_data, cluster = ~ID)
