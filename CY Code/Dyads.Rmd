@@ -6,14 +6,29 @@ output: html_document
 ---
 
 ```{r}
-
-
-
+library(tidyverse)
 library(igraph)
+```
 
 
-str_detect(colnames(updated_data), "to")
+```{r}
+load("C:/Users/chris/replication_game_mtl_2023/CY Code/dyadic_data_1-4-22.Rdata")
 
+
+
+vars <- c("to_mp_number", "to_rile", "to_economy", "to_society", "year", "country", 
+          "to_pfeml", "to_femaleleader")
+
+
+test <- updated_data %>% select(-vars)
+
+updated_data
+
+na.omit(test)
+```
+
+
+```{r}
 to <- colnames(updated_data)[str_detect(colnames(updated_data), "to") == T & str_detect(colnames(updated_data), "together") == F]
 
 from <- colnames(updated_data)[str_detect(colnames(updated_data), "from") == T]
@@ -31,7 +46,7 @@ colnames(from) <- str_replace(colnames(from), "from", "")
 
 vlist <- bind_rows(to, from) %>% distinct() 
 
-elist <- updated_data %>% dplyr::select(country, year, to_mp_number, from_mp_number, same_bloc, elecdate, sat_together_10years,sat_together_15years,
+elist <- updated_data %>% dplyr::select(to_mp_number, from_mp_number, country, year, same_bloc, elecdate, sat_together_10years,sat_together_15years,
                              sat_together_20years,
                              nationalism_distance,
                              rile_distance,
@@ -61,6 +76,28 @@ graph_from_data_frame(elist,
 
 
 
+
+elist <- elist %>% mutate(to_mp_number = paste(to_mp_number, year, sep = "_"),
+                 from_mp_number = paste(from_mp_number, year, sep = "_"))
+
+
+
+vlist
+
+graph_from_data_frame(elist, 
+                               vertices = vlist)
+
+
+vlist <- vlist %>% select(year_MP, colnames(vlist)[2:25])
+
+
+vlist %>% distinct() 
+
+
+table(vlist$year_MP)
+
+
+vlist %>% subset(year_MP == "11110_2014")
 ```
 
 

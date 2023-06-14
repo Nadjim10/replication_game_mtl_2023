@@ -1,0 +1,22 @@
+---
+title: "Rep"
+author: "Chris Yurris"
+date: "2023-06-14"
+output: html_document
+---
+```{r}
+options("install.lock"=FALSE)
+install.packages("usethis")
+library(usethis)
+```
+
+
+```{r}
+usethis::create_github_token()
+gitcreds::gitcreds_set()
+
+
+usethis::create_from_github("Nadjim10/replication_game_mtl_2023")
+
+```
+
