@@ -79,6 +79,8 @@ nrow(updated_data) - nrow(dta) - true.missing
 
 nrow(dta2) - nrow(dta)
 
+#' ## Tables Comparison
+
 #' Let us now compare results with and without the missing data.
 
 table1.1 <-lm(party_like ~ to_pfeml + as.factor(cntryyr), data = dta)
@@ -180,11 +182,7 @@ dta3 <- dta3 %>%
 #' 
 
 #' 
-#' #
-#' 
-
-#' 
-#' ## Comparison of Results
+#' # Final Tables Comparison
 #' 
 
 #' Let us now compare results with and without the imputed data.
