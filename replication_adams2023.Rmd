@@ -39,7 +39,7 @@ if (!require(remotes)) {install.packages("remotes")}
 if (!require(klippy)) {remotes::install_github("rlesur/klippy")}
 klippy::klippy(position = c("top", "right"))
 
-include_long_tables <- FALSE
+include_long_tables <- TRUE
 
 ```
 
@@ -1530,7 +1530,8 @@ stargazer(type = "html", table1.1, table1.2,
           se = starprep(table1.1, table1.2,
                         clusters = dta$country),
           keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
-                   "econ_distance_s", "society_distance_s"))
+                   "econ_distance_s", "society_distance_s"),
+  report = "vc*sp")
 
 stargazer(type = "html", table1.1_2, table1.2_2, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
@@ -1538,7 +1539,8 @@ stargazer(type = "html", table1.1_2, table1.2_2,
           se = starprep(table1.1_2, table1.2_2,
                         clusters = dta$country),
           keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
-                   "econ_distance_s", "society_distance_s"))
+                   "econ_distance_s", "society_distance_s"),
+  report = "vc*sp")
 
 ```
 
@@ -1629,7 +1631,8 @@ stargazer(type = "html", table1.1, table1.2,
           se = starprep(table1.1, table1.2,
                         clusters = dta$country),
           keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
-                   "econ_distance_s", "society_distance_s"))
+                   "econ_distance_s", "society_distance_s"),
+  report = "vc*sp")
 
 stargazer(type = "html", table1.1_3, table1.2_3, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
@@ -1637,7 +1640,8 @@ stargazer(type = "html", table1.1_3, table1.2_3,
           se = starprep(table1.1_3, table1.2_3,
                         clusters = dta3$country),
           keep = c("to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition", 
-                   "econ_distance_s", "society_distance_s"))
+                   "econ_distance_s", "society_distance_s"),
+  report = "vc*sp")
 ```
 
 > After imputation, the numbers differ a little bit (good sign that they are not identical!). However, the results appear pretty robust since they are very similar and nothing has changed signed or significance threshold.
