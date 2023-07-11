@@ -171,6 +171,7 @@ dta_unique <- updated_data |>
          to_femaleleader, to_pfeml) |> # Remove unneeded variables
   na.omit() |>
   distinct() # Keep only the unique parties being evaluated
+
 ```
 
 ## Figure 1
@@ -187,7 +188,11 @@ ggplot(dta_unique, aes(x = to_pfeml)) +
   xlab("Proportion of Women MPs")
 ggsave("_graphs/fig1.pdf", width = 12, height = 10)
 
+```
 
+## Table 1
+
+```{r table1, results="asis"}
 ############################################
 ###### CREATING TABLE 1 COLUMNS 1 & 2 ######
 ############################################
@@ -218,11 +223,37 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table1.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table1.1")
+
+format3 <- function(x) {
+  formatC(x, format = "f", digits = 3)
+}
+
+table1.1 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+
+cat("### Table1.2")
+
+table1.2 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+
+```
+
+```{r table2_prep, results="asis"}
 ############################################
-###### CREATING TABLE 1 COLUMNS 3 & 4 ######
+###### CREATING TABLE 2 COLUMNS 3 & 4 ######
 ############################################
 
 # Note in gendered data, the party_like and party_dislike variable indicate
@@ -255,22 +286,6 @@ tableS2.4 <- lm(like ~ to_pfeml + rile_distance_s + prior_coalition +
   prior_opposition + countryyear, data = dta_male)
 ```
 
-```{r tableS2.3, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## TableS2.3")
-
-tableS2.3 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r tableS2.4, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S2.4")
-
-tableS2.4 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S2 (women)
 
 ```{r tableS2_women, results="asis"}
@@ -284,8 +299,19 @@ stargazer(
     clusters = dta_female$country
   ),
   keep = c("to_pfeml", "rile_distance_s", "prior_coalition", 
-           "prior_opposition", "to_pfeml2")
+           "prior_opposition", "to_pfeml2"),
+  report = "vc*sp"
 )
+```
+
+```{r tableS2.3, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### TableS2.3")
+
+tableS2.3 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ## Table S2 (men)
@@ -301,9 +327,22 @@ stargazer(
     clusters = dta_male$country
   ),
   keep = c("to_pfeml", "rile_distance_s", "prior_coalition", 
-           "prior_opposition", "to_pfeml2")
+           "prior_opposition", "to_pfeml2"),
+  report = "vc*sp"
 )
+```
 
+```{r tableS2.4, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S2.4")
+
+tableS2.4 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r tableS3_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S3 #############
 ############################################
@@ -332,14 +371,6 @@ table.S3 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                  prior_opposition + as.factor(country), data = dta_small_nrr)
 ```
 
-```{r tableS3_sum, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S3 (summary)")
-
-table.S3 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S3 (stargazer)
 
 ```{r tableS3, results="asis"}
@@ -353,9 +384,22 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r tableS3_sum, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S3 (summary)")
+
+table.S3 |>
+  report_table() |>
+  filter(!grepl("country|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r tableS3B_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S3B ############
 ############################################
@@ -381,22 +425,6 @@ table.3B.2 <- lm(party_like ~ to_pfeml + rile_distance_s + to_left_bloc +
                  data = dta_small)
 ```
 
-```{r tableS3B.1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S3B.2")
-
-table.3B.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r tableS3B.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S3B.2")
-
-table.3B.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S3B
 
 ```{r tableS3B.2_stargazer, results="asis"}
@@ -412,9 +440,32 @@ stargazer(
     "to_pfeml", "rile_distance_s", "to_left_bloc", "prior_coalition", 
     "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r tableS3B.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S3B.2")
+
+table.3B.1 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r tableS3B.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S3B.2")
+
+table.3B.2 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r tableS4_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S4 ############
 ############################################
@@ -454,22 +505,6 @@ table.4.2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                 data = dta_late_small)
 ```
 
-```{r table4.1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table 4.1")
-
-table.4.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table4.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table 4.2")
-
-table.4.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table 4.1 (stargazer)
 
 ```{r table4.1_stargazer, results="asis"}
@@ -483,8 +518,19 @@ stargazer(
     clusters = dta_early_small$country
   ),
   keep = c("to_pfeml", "rile_distance_s", "prior_coalition", 
-           "prior_opposition")
+           "prior_opposition"),
+  report = "vc*sp"
 )
+```
+
+```{r table4.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table 4.1")
+
+table.4.1 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ## Table 4.2 (stargazer)
@@ -500,9 +546,22 @@ stargazer(
     clusters = dta_late_small$country
   ),
   keep = c("to_pfeml", "rile_distance_s", "prior_coalition", 
-           "prior_opposition")
+           "prior_opposition"),
+  report = "vc*sp"
 )
+```
 
+```{r table4.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table 4.2")
+
+table.4.2 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table5_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S5 #############
 ############################################
@@ -529,22 +588,6 @@ table.S5.2 <- lm(party_like ~ to_pfeml + from_pfeml + diff_pfeml +
                    as.factor(countryyear), data = dta_small)
 ```
 
-```{r table5.1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table 5.1")
-
-table.S5.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table5.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table 5.2")
-
-table.S5.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table 5
 
 ```{r table5, results="asis"}
@@ -560,9 +603,32 @@ stargazer(
     "to_pfeml", "from_pfeml", "diff_pfeml", "rile_distance_s", 
     "prior_coalition", "prior_opposition", 
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table5.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table 5.1")
+
+table.S5.1 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table5.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table 5.2")
+
+table.S5.2 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r figs1_prep, results="asis"}
 ############################################
 ############ CREATING FIG. S1 #############
 ############################################
@@ -674,30 +740,6 @@ table.S6.3 <- lm(party_like ~ to_pfeml * logDM + rile_distance_s * logDM +
                    as.factor(year), data = dta_small)
 ```
 
-```{r table.S6.1, results="asis", eval=include_long_tables}
-cat("## Table S6.1")
-
-table.S6.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S6.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S6.2")
-
-table.S6.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S6.3, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S6.3")
-
-table.S6.3 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S6
 
 ```{r table.S6, results="asis"}
@@ -711,9 +753,42 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "logDM", "prior_coalition", 
     "prior_opposition", "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S6.1, results="asis", eval=include_long_tables}
+cat("### Table S6.1")
+
+table.S6.1 |>
+  report_table() |>
+  filter(!grepl("year|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S6.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S6.2")
+
+table.S6.2 |>
+  report_table() |>
+  filter(!grepl("year|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S6.3, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S6.3")
+
+table.S6.3 |>
+  report_table() |>
+  filter(!grepl("year|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S7_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S7 #############
 ############################################
@@ -741,22 +816,6 @@ table.S7.2 <- lm(party_like ~ to_pfeml + to_pfeml2 + rile_distance_s +
                  data = dta)
 ```
 
-```{r table.S7.1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S7.1")
-
-table.S7.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S7.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S7.2")
-
-table.S7.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S7
 
 ```{r table.S7, results="asis"}
@@ -771,9 +830,32 @@ stargazer(
   keep = c(
     "to_pfeml", "to_pfeml2", "rile_distance_s", "prior_coalition", 
     "prior_opposition", "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S7.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S7.1")
+
+table.S7.1 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S7.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S7.2")
+
+table.S7.2 |>
+  report_table() |>
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r figS2_prep, results="asis"}
 ############################################
 ############ CREATING FIG. S2 #############
 ############################################
@@ -851,23 +933,7 @@ table.S8A2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                  data = dta_womenlead)
 ```
 
-```{r table.S8A1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S8A1")
-
-table.S8A1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S8A2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S8A2")
-
-table.S8A2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-##Table S8A
+## Table S8A
 
 ```{r table.S8A, results="asis"}
 # With clustered SEs
@@ -881,9 +947,32 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S8A1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S8A1")
+
+table.S8A1 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,             
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S8A2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S8A2")
+
+table.S8A2 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,             
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S8B_prep, results="asis"}
 # Male-led parties
 
 load("_data/dyadic_data_1-4-22.Rdata")
@@ -907,22 +996,6 @@ table.S8B2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                  data = dta_malelead)
 ```
 
-```{r table.S8B1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S8B1")
-
-table.S8B1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S8B2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S8B2")
-
-table.S8B2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S8B
 
 ```{r table.S8B, results="asis"}
@@ -937,9 +1010,32 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S8B1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S8B1")
+
+table.S8B1 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S8B2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S8B2")
+
+table.S8B2 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S9_prep, results="asis"}
 ############################################
 ############ CREATING TABLE S9 #############
 ############################################
@@ -966,14 +1062,6 @@ table.S9 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                  prior_opposition + as.factor(countryyear), data = dta)
 ```
 
-```{r table.S9, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S9")
-
-table.S9 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S9 (Stargazer)
 
 ```{r table.S9_stargazer, results="asis"}
@@ -989,9 +1077,22 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S9, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S9")
+
+table.S9 |>
+  report_table() |>
+  filter(!grepl("countryyear|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S10_prep, results="asis"}
 ############################################
 ############ CREATING TABLE 10 #############
 ############################################
@@ -1012,22 +1113,6 @@ table.S10.2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                     prior_opposition + as.factor(country), data = dta_small)
 ```
 
-```{r table.S10.1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S10.1")
-
-table.S10.1 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
-```{r table.S10.2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Table S10.2")
-
-table.S10.2 |>
-  report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
-```
-
 ## Table S10
 
 ```{r table.S10, results="asis"}
@@ -1042,9 +1127,32 @@ stargazer(
   keep = c(
     "to_pfeml", "rile_distance_s", "prior_coalition", "prior_opposition",
     "econ_distance_s", "society_distance_s"
-  )
+  ),
+  report = "vc*sp"
 )
+```
 
+```{r table.S10.1, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S10.1")
+
+table.S10.1 |>
+  report_table() |>
+  filter(!grepl("country|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S10.2, results="asis", include=include_long_tables, eval=include_long_tables}
+cat("### Table S10.2")
+
+table.S10.2 |>
+  report_table() |>
+  filter(!grepl("country|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
+```
+
+```{r table.S11_prep, results="asis"}
 ##################################################
 ############ CREATING TABLES 11 & 12 #############
 ##################################################
@@ -1144,11 +1252,13 @@ model_1 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```
 
 ```{r model_1, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Model 1")
+cat("### Model 1")
 
 model_1 |>
   report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,             
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ```{r model_2_prep}
@@ -1176,11 +1286,13 @@ model_2 <- lm(party_like ~ to_pfeml + nationalism_distance_s +
 ```
 
 ```{r model_2, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Model 2")
+cat("### Model 2")
 
 model_2 |>
   report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,             
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ```{r model_3_prep}
@@ -1205,11 +1317,13 @@ model_3 <- lm(party_like ~ to_pfeml + econ_distance_s + prior_coalition +
 ```
 
 ```{r model_3, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Model 3")
+cat("### Model 3")
 
 model_3 |>
   report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,             
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ```{r model_4_prep}
@@ -1234,11 +1348,13 @@ model_4 <- lm(party_like ~ to_pfeml + galtan_distance_s + prior_coalition +
 ```
 
 ```{r model_4, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Model 4")
+cat("### Model 4")
 
 model_4 |>
   report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ```{r model_5_prep}
@@ -1262,11 +1378,13 @@ model_5 <- lm(party_like ~ to_pfeml + society_distance_s + prior_coalition +
 ```
 
 ```{r model_5, results="asis", include=include_long_tables, eval=include_long_tables}
-cat("## Model 5")
+cat("### Model 5")
 
 model_5 |>
   report_table() |>
-  nice_table(highlight = TRUE, short = TRUE)
+  filter(!grepl("cntryyr|Intercept", Parameter)) |> 
+  nice_table(highlight = TRUE, short = TRUE,              
+             col.format.custom = 2, format.custom = "format3")
 ```
 
 ```{r graph_prep}
