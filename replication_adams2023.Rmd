@@ -39,7 +39,7 @@ if (!require(remotes)) {install.packages("remotes")}
 if (!require(klippy)) {remotes::install_github("rlesur/klippy")}
 klippy::klippy(position = c("top", "right"))
 
-include_long_tables <- TRUE
+include_long_tables <- FALSE
 
 ```
 
