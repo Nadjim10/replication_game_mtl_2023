@@ -3,19 +3,8 @@ title: '**Replicating Adams et al. (2023)**'
 subtitle: "(Can’t We All Just Get Along?)"
 author: "Daniel Benenson Markovits; Nadjim Fréchet; Rémi Thériault; Chris Yurris"
 date: "`r format(Sys.Date())`"
-output:
-  html_document:
-    theme: cerulean
-    highlight: pygments
-    toc: yes # Add a table of content?
-    toc_depth: 3 # What levels to include in the table of content?
-    toc_float: yes # Make the table of content follow when scrolling down?
-    number_sections: no # Add a number to your sections?
-    df_print: kable
-    code_folding: hide # Add a button to fold code (or: show)
-    code_download: yes # Add a button to download the script
-    anchor_sections: # Add link buttons to each section
-      style: symbol
+output: pdf_document
+always_allow_html: true
 ---
 
 # Report & Conclusions
@@ -214,7 +203,7 @@ table1.2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 
 # With clustered ses
 stargazer(
-  type = "html", table1.1, table1.2,
+  type = "latex", table1.1, table1.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table1.1, table1.2,
@@ -291,7 +280,7 @@ tableS2.4 <- lm(like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r tableS2_women, results="asis"}
 # With clustered ses - women
 stargazer(
-  type = "html", tableS2.3,
+  type = "latex", tableS2.3,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Out-Party Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered ses?", "Yes")),
@@ -319,7 +308,7 @@ tableS2.3 |>
 ```{r tableS2_men, results="asis"}
 # With clustered ses - men
 stargazer(
-  type = "html", tableS2.4,
+  type = "latex", tableS2.4,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Out-Party Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered ses?", "Yes")),
@@ -375,7 +364,7 @@ table.S3 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 
 ```{r tableS3, results="asis"}
 stargazer(
-  type = "html", table.S3,
+  type = "latex", table.S3,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered ses?", "Yes")),
   se = starprep(table.S3,
@@ -430,7 +419,7 @@ table.3B.2 <- lm(party_like ~ to_pfeml + rile_distance_s + to_left_bloc +
 ```{r tableS3B.2_stargazer, results="asis"}
 # With clustered ses
 stargazer(
-  type = "html", table.3B.1, table.3B.2,
+  type = "latex", table.3B.1, table.3B.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.3B.1, table.3B.2,
@@ -510,7 +499,7 @@ table.4.2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r table4.1_stargazer, results="asis"}
 # With clustered ses
 stargazer(
-  type = "html", table.4.1,
+  type = "latex", table.4.1,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Out-Party Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered ses?", "Yes")),
@@ -538,7 +527,7 @@ table.4.1 |>
 ```{r table4.2_stargazer, results="asis"}
 # With clustered ses
 stargazer(
-  type = "html", table.4.2,
+  type = "latex", table.4.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Out-Party Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
@@ -593,7 +582,7 @@ table.S5.2 <- lm(party_like ~ to_pfeml + from_pfeml + diff_pfeml +
 ```{r table5, results="asis"}
 # With clustered ses
 stargazer(
-  type = "html", table.S5.1, table.S5.2,
+  type = "latex", table.S5.1, table.S5.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S5.1, table.S5.2,
@@ -744,7 +733,7 @@ table.S6.3 <- lm(party_like ~ to_pfeml * logDM + rile_distance_s * logDM +
 
 ```{r table.S6, results="asis"}
 stargazer(
-  type = "html", table.S6.1, table.S6.2, table.S6.3,
+  type = "latex", table.S6.1, table.S6.2, table.S6.3,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S6.1, table.S6.2, table.S6.3,
@@ -821,7 +810,7 @@ table.S7.2 <- lm(party_like ~ to_pfeml + to_pfeml2 + rile_distance_s +
 ```{r table.S7, results="asis"}
 # With clustered ses
 stargazer(
-  type = "html", table.S7.1, table.S7.2,
+  type = "latex", table.S7.1, table.S7.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S7.1, table.S7.2,
@@ -938,7 +927,7 @@ table.S8A2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r table.S8A, results="asis"}
 # With clustered SEs
 stargazer(
-  type = "html", table.S8A1, table.S8A2,
+  type = "latex", table.S8A1, table.S8A2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S8A1, table.S8A2,
@@ -1001,7 +990,7 @@ table.S8B2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r table.S8B, results="asis"}
 ### With clustered SEs
 stargazer(
-  type = "html", table.S8B1, table.S8B2,
+  type = "latex", table.S8B1, table.S8B2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S8B1, table.S8B2,
@@ -1067,7 +1056,7 @@ table.S9 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r table.S9_stargazer, results="asis"}
 ### With clustered SEs
 stargazer(
-  type = "html", table.S9,
+  type = "latex", table.S9,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Out-Party Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
@@ -1118,7 +1107,7 @@ table.S10.2 <- lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 ```{r table.S10, results="asis"}
 ### With clustered SEs
 stargazer(
-  type = "html", table.S10.1, table.S10.2,
+  type = "latex", table.S10.1, table.S10.2,
   add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                    c("Country-Level Clustered SEs?", "Yes")),
   se = starprep(table.S10.1, table.S10.2,
@@ -1525,7 +1514,7 @@ table1.2_2 <-lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
 
 ```{r, results="asis"}
 # With clustered ses
-stargazer(type = "html", table1.1, table1.2, 
+stargazer(type = "latex", table1.1, table1.2, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
           se = starprep(table1.1, table1.2,
                         clusters = dta$country),
@@ -1533,7 +1522,7 @@ stargazer(type = "html", table1.1, table1.2,
                    "econ_distance_s", "society_distance_s"),
   report = "vc*sp")
 
-stargazer(type = "html", table1.1_2, table1.2_2, 
+stargazer(type = "latex", table1.1_2, table1.2_2, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                            c("Country-Level Clustered SEs?", "Yes")),
           se = starprep(table1.1_2, table1.2_2,
@@ -1626,7 +1615,7 @@ table1.2_3 <-lm(party_like ~ to_pfeml + rile_distance_s + prior_coalition +
                   prior_opposition + as.factor(cntryyr), data = dta3)
 
 # With clustered ses
-stargazer(type = "html", table1.1, table1.2, 
+stargazer(type = "latex", table1.1, table1.2, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), c("Country-Level Clustered SEs?", "Yes")),
           se = starprep(table1.1, table1.2,
                         clusters = dta$country),
@@ -1634,7 +1623,7 @@ stargazer(type = "html", table1.1, table1.2,
                    "econ_distance_s", "society_distance_s"),
   report = "vc*sp")
 
-stargazer(type = "html", table1.1_3, table1.2_3, 
+stargazer(type = "latex", table1.1_3, table1.2_3, 
           add.lines = list(c("Country-Year Fixed Effects?", "Yes"), 
                            c("Country-Level Clustered SEs?", "Yes")),
           se = starprep(table1.1_3, table1.2_3,
